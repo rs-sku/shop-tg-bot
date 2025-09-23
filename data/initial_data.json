@@ -1,0 +1,37 @@
+{
+  "categories": [
+    {
+      "name": "Кофе"
+    },
+    {
+      "name": "Чай"
+    },
+    {
+      "name": "Десерты"
+    }
+  ],
+   "goods": [
+    {
+      "name": "Эспрессо",
+      "description": "Классический кофе, 30 мл",
+      "price": 120.00,
+      "photo_file_path": "data/photos/espresso.jpg",
+      "category_name": "Кофе"
+    },
+    {
+      "name": "Капучино",
+      "description": "Кофе с молочной пенкой, 200 мл",
+      "price": 180.00,
+      "photo_file_path": "data/photos/cappuccino.jpg",
+      "category_name": "Кофе"
+    },
+    {
+      "name": "Чизкейк",
+      "description": "Нежный творожный клубничный десерт",
+      "price": 250.00,
+      "photo_file_path": "data/photos/cheesecake.jpg",
+      "category_name": "Десерты"
+    }
+  ]
+}
+   
