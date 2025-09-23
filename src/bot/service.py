@@ -4,7 +4,12 @@ from enum import Enum
 from uuid import UUID
 
 from src.bot.exceptions import WrongContactsInput
-from src.bot.schemas import CartGoodSchema, CategorieSchema, GoodSchema, OrderSchema
+from src.bot.schemas import (
+    CartGoodSchema,
+    CategorieSchema,
+    GoodSchema,
+    OrderSchema,
+)
 from src.db.models import DeliveryTypes
 from src.db.repository import Repository
 
@@ -29,10 +34,7 @@ class Service:
             category_schema = CategorieSchema(
                 id=category.id,
                 name=category.name,
-                goods=[
-                    GoodSchema.model_validate(good, from_attributes=True)
-                    for good in category.goods
-                ],
+                goods=[GoodSchema.model_validate(good, from_attributes=True) for good in category.goods],
             )
             schemas.append(category_schema)
         return schemas
@@ -60,7 +62,10 @@ class Service:
         quantity = await self._repository.get_good_quantity(cart.id)
         return [
             CartGoodSchema(
-                id=good.id, name=good.name, price=good.price, quantity=quantity[good.id]
+                id=good.id,
+                name=good.name,
+                price=good.price,
+                quantity=quantity[good.id],
             )
             for good in cart.goods
         ]
@@ -75,9 +80,7 @@ class Service:
             res += good_schema.price * good_schema.quantity
         return f"Стоимость корзины: {res}"
 
-    async def change_quantity(
-        self, chat_id: int, good_id: int, new_quantity: int
-    ) -> str:
+    async def change_quantity(self, chat_id: int, good_id: int, new_quantity: int) -> str:
         user = await self._repository.get_user_by_chat_id(chat_id)
         cart = await self._repository.get_cart_by_user_id(user.id)
         await self._repository.change_good_quantity(cart.id, good_id, new_quantity)
@@ -94,9 +97,7 @@ class Service:
         if len(valid_contacts) != 3:
             raise WrongContactsInput()
         user = await self._repository.get_user_by_chat_id(chat_id)
-        await self._repository.add_user_contacts(
-            user.id, valid_contacts[0], valid_contacts[1], valid_contacts[2]
-        )
+        await self._repository.add_user_contacts(user.id, valid_contacts[0], valid_contacts[1], valid_contacts[2])
 
     async def create_order(self, chat_id: int, delivery_type: DeliveryTypes) -> UUID:
         user = await self._repository.get_user_by_chat_id(chat_id)

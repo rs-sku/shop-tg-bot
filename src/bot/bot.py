@@ -38,9 +38,7 @@ class TextConstants(Enum):
     CHANGE_QUANTITY = "Изменить количество"
     REQUEST_QUANTITY = "Введите новое количество товара одним числом"
     QUANTITY_ANSWER = "Количество товара успешно обновлено"
-    CONTACTS_REQUEST = (
-        "Введите через запятую в таком же порядке: ФИО, телефон начиная с +7, адрес"
-    )
+    CONTACTS_REQUEST = "Введите через запятую в таком же порядке: ФИО, телефон начиная с +7, адрес"
     PICKUP = "Забрать самовывозом"
     TO_HOME = "Доставка по указанному адресу"
     CHOOSE_RECEIVING = "Выберите способ получения товара"
@@ -49,7 +47,9 @@ class TextConstants(Enum):
     RECREATE_ORDER = "Пройдите процесс создания заказа заново"
     ORDER_NUMBER = "Номер вашего заказа: "
     INPUT_TOKEN = "Введите токен администратора"
-    GOOD_INPUT_FORMAT = "name:<название товара>,description:<описание товара>,price:<цена товара>,category_name:<название категории>"
+    GOOD_INPUT_FORMAT = (
+        "name:<название товара>,description:<описание товара>,price:<цена товара>,category_name:<название категории>"
+    )
     GOOD_UPDATE_INPUT_FROMAT = (
         "name:<новое название товара>,description:<новое описание товара>,price:<новая цена товара>,"
         "category_name:<название категории>,<исходное название товара>"
@@ -94,9 +94,7 @@ class AdminTokenRequest(StatesGroup):
 
 
 class ShopBot:
-    def __init__(
-        self, dp: Dispatcher, bot_obj: Bot, service: Service, admin_token: str
-    ) -> None:
+    def __init__(self, dp: Dispatcher, bot_obj: Bot, service: Service, admin_token: str) -> None:
         self._dp = dp
         self._bot = bot_obj
         self._service = service
@@ -226,7 +224,8 @@ class ShopBot:
                 builder.button(text=category_schema.name, callback_data=f"Category:{i}")
             builder.adjust(1)
             await msg.answer(
-                f"{TextConstants.CATEGORIES.value}:", reply_markup=builder.as_markup()
+                f"{TextConstants.CATEGORIES.value}:",
+                reply_markup=builder.as_markup(),
             )
 
     def _handle_categories_goods(self) -> None:
@@ -236,16 +235,17 @@ class ShopBot:
             ind_x = int(callback.data.split(":")[1])
             for i, good_schema in enumerate(categories_schemas[ind_x].goods):
                 good_data = self._service.display_good_base(good_schema)
-                text, relative_path = good_data["text"], good_data["photo_path"]
+                text, relative_path = (
+                    good_data["text"],
+                    good_data["photo_path"],
+                )
                 builder = InlineKeyboardBuilder()
                 builder.button(
                     text=TextConstants.ADD_TO_CART.value,
                     callback_data=f"AddGood:{i}:{ind_x}",
                 )
                 if relative_path:
-                    BASE_DIR = Path(
-                        __file__
-                    ).parent.parent.parent  # Be carefull if reorgonised project
+                    BASE_DIR = Path(__file__).parent.parent.parent  # Be carefull if reorgonised project
                     photo_path = BASE_DIR / relative_path
                     if photo_path.exists():
                         photo = FSInputFile(photo_path)
@@ -310,9 +310,7 @@ class ShopBot:
                     callback_data=f"Quantity:{good_id}",
                 )
                 text = self._service.display_good_in_cart(cart_good_schema)
-                await callback.message.answer(
-                    text=text, reply_markup=builder.as_markup()
-                )
+                await callback.message.answer(text=text, reply_markup=builder.as_markup())
             total_cost = await self._service.display_total_cost(chat_id)
             await callback.message.answer(text=total_cost)
             await callback.answer()
@@ -381,9 +379,7 @@ class ShopBot:
                 await state.clear()
 
     def _handle_order_approvement_request(self) -> None:
-        @self._dp.callback_query(
-            F.data.in_([DeliveryTypes.PICKUP.value, DeliveryTypes.TO_HOME.value])
-        )
+        @self._dp.callback_query(F.data.in_([DeliveryTypes.PICKUP.value, DeliveryTypes.TO_HOME.value]))
         async def handle(callback: CallbackQuery, state: FSMContext) -> None:
             delivery_type = callback.data
             chat_id = callback.message.chat.id
@@ -391,7 +387,8 @@ class ShopBot:
             contacts = await self._service.display_user_contacts(chat_id)
             text = (
                 contacts
-                + f"\n{DELIVERY_TYPES_MAP[delivery_type]}\n{TextConstants.APPROVE.value}/{TextConstants.NOT_APPROVE.value}?"
+                + f"\n{DELIVERY_TYPES_MAP[delivery_type]}\n{TextConstants.APPROVE.value}/"
+                f"{TextConstants.NOT_APPROVE.value}?"
             )
             await callback.message.answer(text=text)
             await state.set_state(ApprovementRequest.waiting_for_approvement)

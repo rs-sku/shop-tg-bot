@@ -1,7 +1,5 @@
-line-length = 120
-
 [tool.ruff]
 extend-select = ["I"]
 select = ["E", "F", "ANN"]
 exclude =["tmp", ".venv"]
-ignore = ["E501"] 
+line-length = 120

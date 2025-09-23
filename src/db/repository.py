@@ -25,9 +25,7 @@ class Repository:
 
     async def get_all_categories_goods(self) -> list[Category]:
         async with self._session as session:
-            res = await session.execute(
-                select(Category).options(joinedload(Category.goods))
-            )
+            res = await session.execute(select(Category).options(joinedload(Category.goods)))
             res = res.unique()
             return res.scalars().all()
 
@@ -54,9 +52,7 @@ class Repository:
 
     async def get_cart_by_user_id(self, user_id: int) -> Cart | None:
         async with self._session as session:
-            stmt = (
-                select(Cart).filter_by(user_id=user_id).options(joinedload(Cart.goods))
-            )
+            stmt = select(Cart).filter_by(user_id=user_id).options(joinedload(Cart.goods))
             res = await session.execute(stmt)
             res = res.unique()
             return res.scalar_one_or_none()
@@ -86,9 +82,7 @@ class Repository:
                     )
                     log_msg = f"{good_id=} in {cart_id} increased by one"
                 else:
-                    stmt = insert(cart_good_table).values(
-                        cart_id=cart_id, good_id=good_id
-                    )
+                    stmt = insert(cart_good_table).values(cart_id=cart_id, good_id=good_id)
                     log_msg = f"{good_id=} added in cart {cart_id=}"
 
                 await session.execute(stmt)
@@ -108,9 +102,7 @@ class Repository:
 
             return {r.good_id: r.quantity for r in row}
 
-    async def change_good_quantity(
-        self, cart_id: int, good_id: int, new_quantity: int
-    ) -> None:
+    async def change_good_quantity(self, cart_id: int, good_id: int, new_quantity: int) -> None:
         async with self._session as session:
             try:
                 stmt = (
@@ -137,15 +129,9 @@ class Repository:
             await session.execute(stmt)
             await session.commit()
 
-    async def add_user_contacts(
-        self, user_id: int, full_name: str, phone: str, adress: str
-    ) -> None:
+    async def add_user_contacts(self, user_id: int, full_name: str, phone: str, adress: str) -> None:
         async with self._session as session:
-            stmt = (
-                update(User)
-                .where(User.id == user_id)
-                .values(full_name=full_name, phone=phone, adress=adress)
-            )
+            stmt = update(User).where(User.id == user_id).values(full_name=full_name, phone=phone, adress=adress)
             await session.execute(stmt)
             await session.commit()
 
@@ -159,9 +145,7 @@ class Repository:
 
     async def change_order_approvement(self, order_id: int, new_status: bool) -> None:
         async with self._session as session:
-            stmt = (
-                update(Order).where(Order.id == order_id).values(is_approved=new_status)
-            )
+            stmt = update(Order).where(Order.id == order_id).values(is_approved=new_status)
             await session.execute(stmt)
             await session.commit()
 

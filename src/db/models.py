@@ -56,9 +56,7 @@ cart_good_table = Table(
 
 class Good(Base):
     __tablename__ = "goods"
-    name: Mapped[str] = mapped_column(
-        String(128), unique=True
-    )  # unique to simplify admin management
+    name: Mapped[str] = mapped_column(String(128), unique=True)  # unique to simplify admin management
     description: Mapped[str] = mapped_column(String(256))
     price: Mapped[Decimal] = mapped_column(Numeric(10, 2))
     photo_file_path: Mapped[str] = mapped_column(String(128), nullable=True)
