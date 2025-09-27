@@ -99,15 +99,7 @@ class ShopBot:
         self._bot = bot_obj
         self._service = service
         self._admin_token = admin_token
-
-    async def _set_commands(self) -> None:
-        commands = [
-            BotCommand(command=BotCmds.START.value, description="Start bot"),
-            BotCommand(command=BotCmds.HELP.value, description="Help"),
-            BotCommand(command=BotCmds.ADMIN.value, description="Show admin commans"),
-        ]
-        await self._bot.set_my_commands(commands)
-
+        
     async def start(self) -> None:
         await self._set_commands()
         self._start_cmd_handler()
@@ -131,6 +123,14 @@ class ShopBot:
         self._handle_order_approvement_request()
         self._handle_order_approvement()
         await self._dp.start_polling(self._bot)
+
+    async def _set_commands(self) -> None:
+        commands = [
+            BotCommand(command=BotCmds.START.value, description="Start bot"),
+            BotCommand(command=BotCmds.HELP.value, description="Help"),
+            BotCommand(command=BotCmds.ADMIN.value, description="Show admin commans"),
+        ]
+        await self._bot.set_my_commands(commands)
 
     def _start_cmd_handler(self) -> None:
         @self._dp.message(CommandStart())
